@@ -6,7 +6,7 @@
 
 
 
-## Following operation have been created and test on postman
+## Following operation have been created and tested on postman
     -   CREATE TASK
     -   READ TASK
     -   UPDATE TASK
