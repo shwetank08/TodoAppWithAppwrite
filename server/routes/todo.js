@@ -12,7 +12,7 @@ const {
 
 router.post('/createtask',createTodo);
 router.get('/gettask',getTodo);
-router.delete('/deletetask',deleteTodo);
-router.put('/updatetask',updateTodo);
+router.delete('/:id/deletetask',deleteTodo);
+router.put('/:id/updatetask',updateTodo);
 
 module.exports = router;
