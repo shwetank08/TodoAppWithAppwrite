@@ -23,7 +23,7 @@ exports.createTodo = async(req,res) => {
 //delete todo
 exports.deleteTodo = async(req,res) => {
     try{
-        const findTask = await Todo.findByIdAndDelete(req.params.id,req.body);
+        const findTask = await Todo.findByIdAndDelete(req.params.id);
 
         res.status(201).json({
             success: true,
