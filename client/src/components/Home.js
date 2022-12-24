@@ -1,18 +1,33 @@
 import React, { useEffect, useState } from "react";
 
+import account from "../appwrite/appwriteConfig";
+
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+import {
+  PencilSquare,
+  XSquareFill,
+} from "react-bootstrap-icons";
+import { useNavigate } from "react-router-dom";
+
+
 const Home = () => {
+  const navigate = useNavigate();
+
   const [list, setList] = useState([
     {task: "demo"}
   ]);
   const [task, setTask] = useState("");
-  const [updating, setUpdating] = useState(false)
+  const [updating, setUpdating] = useState(false);
+  const [userId, setUserId] = useState("");
   const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (!task) {
       return alert("please fill the task field");
     }
-    console.log(task)
+    
     try {
       const res = await fetch('/createtask', {
         method: "POST",
@@ -24,16 +39,37 @@ const Home = () => {
           task,
         }),
       });
+      setTask("");
+
       const data = await res.json();
       console.log(data);
       if (res.status === 400 || !data) {
-        return alert("Task creation failed");
+        return toast.warn('TASK CREATION FAILED', {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+          });
       } else {
-        return alert("Task created successfully");
+        return toast.success('TASK CREATED SUCCESSFULLY', {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+          });
       }
     } catch (err) {
       console.log(err);
     }
+
   };
   const handleDelete = async (e) => {
     try {
@@ -48,9 +84,27 @@ const Home = () => {
       });
       const data = await res.json();
       if (res.status === 400 || !data) {
-        return alert("Delete failed");
+        return toast.warn('TASK DELETION FAILED', {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+          });
       } else {
-        return alert("Delete success");
+        return toast.success('TASK DELETED', {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+          });
       }
     } catch (err) {
       console.log(err);
@@ -58,12 +112,11 @@ const Home = () => {
   };
   const handleUpdate = async (e) => {
     e.preventDefault();
-    if (!task) {
-      return alert("please fill the task field");
-    }
+    setUpdating(!updating);
+    setTask("");
+    setUserId("");
     try {
-      const id = e._id;
-      const res = await fetch(`/${id}/updatetask`, {
+      const res = await fetch(`/${userId}/updatetask`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -75,13 +128,32 @@ const Home = () => {
       });
       const data = await res.json();
       if (res.status === 400 || !data) {
-        return alert("Update failed");
+        return toast.warn('UPDATE FAILED', {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+          });
       } else {
-        return alert("Update success");
+        return toast.success('UPDATE SUCCESS', {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+          });
       }
     } catch (err) {
       console.log(err);
     }
+    
   };
 
   const handleGET = async () => {
@@ -105,12 +177,29 @@ const Home = () => {
     handleGET();
   }, [list]);
 
-  const initiateUpdate = () => {
-    setUpdating(!updating);
+  const initiateUpdate = (e) => {
+    setUpdating(true);
+    setTask(e.task);
+    setUserId(e._id);
+  }
+
+  const handleLogout = () => {
+    const promise = account.deleteSession('current');
+
+    promise.then(function (response) {
+        console.log(response); // Success
+        return navigate('/api/u/login');
+    }, function (error) {
+        console.log(error); // Failure
+        alert("logging out failed")
+    });
   }
 
   return (
+    <>
+    <ToastContainer/>
     <div class="w-[450px] mx-auto mt-[3rem]">
+    <button onClick={handleLogout}>LOGOUT</button>
       <form class="w-full">
         <div class="flex items-center justify-center border-b border-teal-500 py-2">
           <input
@@ -149,21 +238,22 @@ const Home = () => {
           {list &&
             list.map((e) => {
               return (
-                <li class="px-6 py-2 border-b border-gray-200 w-full rounded-t-lg">
-                  {e.task}
+                <li class="px-6 py-2 border-b border-gray-200 w-full rounded-t-lg flex justify-around">
+                <div class="break-normal w-[400px]">{e.task}</div>  
+                
                   <span
                     onClick={() => {
                       initiateUpdate(e);
                     }}
                   >
-                    UPD
+                    <PencilSquare/>
                   </span>
                   <span
                     onClick={() => {
                       handleDelete(e);
                     }}
                   >
-                    DEL
+                    <XSquareFill/>
                   </span>
                 </li>
               );
@@ -171,6 +261,7 @@ const Home = () => {
         </ul>
       </div>
     </div>
+    </>
   );
 };
 
