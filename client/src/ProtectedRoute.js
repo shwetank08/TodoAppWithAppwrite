@@ -1,14 +1,22 @@
 import React from 'react'
 import { useNavigate, Outlet} from 'react-router-dom';
+import account from './appwrite/appwriteConfig'
 
 
-const ProtectedRoute = ({isLoggedIn}) => {
+const ProtectedRoute = () => {
   const navigate = useNavigate();
-  console.log("Inside protected route", isLoggedIn);
-  if(!isLoggedIn){
-    return navigate("/api/u/login")
-  }
-  return <Outlet/>
+
+  const promise = account.get();
+
+  promise.then(function (response) {
+     // Success
+      console.log("success");
+  }, function (error) {
+     // Failure
+      console.log("failure", error);
+      return navigate("/api/u/login");
+  });
+  return <Outlet/>;
 }
 
-export default ProtectedRoute
+export default ProtectedRoute;
