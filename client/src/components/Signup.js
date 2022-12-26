@@ -3,6 +3,7 @@ import account  from "../appwrite/appwriteConfig";
 import { useNavigate } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 import {ID} from 'appwrite'
+import { toast } from "react-toastify";
 const Signup = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
@@ -20,9 +21,29 @@ const Signup = () => {
       function (response) {
         console.log(response);
         navigate("/api/u/home");
+        return toast.success('SIGNED UP SUCCESSFULLY', {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+          });
       },
       function (error) {
         console.log("ERR-SIGNUP: ", error);
+        return toast.error('LOGIN FAILED', {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+          });
       }
     );
   };
@@ -94,7 +115,7 @@ const Signup = () => {
             <div>
               <button
                 type="submit"
-                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white  bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white  bg-[#000000] hover:bg-[#5a9276] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                 onClick={handleSubmit}
               >
                 Sign in

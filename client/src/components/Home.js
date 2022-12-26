@@ -2,34 +2,30 @@ import React, { useEffect, useState } from "react";
 
 import account from "../appwrite/appwriteConfig";
 
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-import {
-  PencilSquare,
-  XSquareFill,
-} from "react-bootstrap-icons";
+import { PencilSquare, XSquareFill, Power} from "react-bootstrap-icons";
 import { useNavigate } from "react-router-dom";
-
 
 const Home = () => {
   const navigate = useNavigate();
 
-  const [list, setList] = useState([
-    {task: "demo"}
-  ]);
+  const [list, setList] = useState([{ task: "demo" }]);
   const [task, setTask] = useState("");
   const [updating, setUpdating] = useState(false);
   const [userId, setUserId] = useState("");
+  const [name, setName] = useState("");
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!task) {
       return alert("please fill the task field");
     }
-    
+
     try {
-      const res = await fetch('/createtask', {
+      const res = await fetch("/createtask", {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -44,7 +40,7 @@ const Home = () => {
       const data = await res.json();
       console.log(data);
       if (res.status === 400 || !data) {
-        return toast.warn('TASK CREATION FAILED', {
+        return toast.warn("TASK CREATION FAILED", {
           position: "top-right",
           autoClose: 5000,
           hideProgressBar: false,
@@ -53,9 +49,9 @@ const Home = () => {
           draggable: true,
           progress: undefined,
           theme: "dark",
-          });
+        });
       } else {
-        return toast.success('TASK CREATED SUCCESSFULLY', {
+        return toast.success("TASK CREATED", {
           position: "top-right",
           autoClose: 5000,
           hideProgressBar: false,
@@ -64,12 +60,11 @@ const Home = () => {
           draggable: true,
           progress: undefined,
           theme: "dark",
-          });
+        });
       }
     } catch (err) {
       console.log(err);
     }
-
   };
   const handleDelete = async (e) => {
     try {
@@ -84,7 +79,7 @@ const Home = () => {
       });
       const data = await res.json();
       if (res.status === 400 || !data) {
-        return toast.warn('TASK DELETION FAILED', {
+        return toast.warn("TASK DELETION FAILED", {
           position: "top-right",
           autoClose: 5000,
           hideProgressBar: false,
@@ -93,9 +88,9 @@ const Home = () => {
           draggable: true,
           progress: undefined,
           theme: "dark",
-          });
+        });
       } else {
-        return toast.success('TASK DELETED', {
+        return toast.success("TASK DELETED", {
           position: "top-right",
           autoClose: 5000,
           hideProgressBar: false,
@@ -104,7 +99,7 @@ const Home = () => {
           draggable: true,
           progress: undefined,
           theme: "dark",
-          });
+        });
       }
     } catch (err) {
       console.log(err);
@@ -128,7 +123,7 @@ const Home = () => {
       });
       const data = await res.json();
       if (res.status === 400 || !data) {
-        return toast.warn('UPDATE FAILED', {
+        return toast.warn("UPDATE FAILED", {
           position: "top-right",
           autoClose: 5000,
           hideProgressBar: false,
@@ -137,9 +132,9 @@ const Home = () => {
           draggable: true,
           progress: undefined,
           theme: "dark",
-          });
+        });
       } else {
-        return toast.success('UPDATE SUCCESS', {
+        return toast.success("UPDATE SUCCESS", {
           position: "top-right",
           autoClose: 5000,
           hideProgressBar: false,
@@ -148,15 +143,16 @@ const Home = () => {
           draggable: true,
           progress: undefined,
           theme: "dark",
-          });
+        });
       }
     } catch (err) {
       console.log(err);
     }
-    
   };
 
   const handleGET = async () => {
+    const username = account.name;
+    setName(username);
     try {
       const res = await fetch("/gettask", {
         method: "GET",
@@ -181,86 +177,90 @@ const Home = () => {
     setUpdating(true);
     setTask(e.task);
     setUserId(e._id);
-  }
+  };
 
   const handleLogout = () => {
-    const promise = account.deleteSession('current');
+    const promise = account.deleteSession("current");
 
-    promise.then(function (response) {
+    promise.then(
+      function (response) {
         console.log(response); // Success
-        return navigate('/api/u/login');
-    }, function (error) {
+        return navigate("/api/u/login");
+      },
+      function (error) {
         console.log(error); // Failure
-        alert("logging out failed")
-    });
-  }
+        alert("logging out failed");
+      }
+    );
+  };
 
   return (
     <>
-    <ToastContainer/>
-    <div class="w-[450px] mx-auto mt-[3rem]">
-    <button onClick={handleLogout}>LOGOUT</button>
-      <form class="w-full">
-        <div class="flex items-center justify-center border-b border-teal-500 py-2">
-          <input
-            class="appearance-none bg-transparent border-none w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none"
-            type="text"
-            placeholder="Feed the dog"
-            value={task}
-            onChange={(e)=>setTask(e.target.value)}
-          />
-          {updating?(
-            <button
-            class="flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded"
-            type="button"
-            onClick={(e) => {
-              handleUpdate(e)
-            }}
-          >
-            Update
-          </button>
-          ):(
-            <button
-            class="flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded"
-            type="button"
-            onClick={(e) => {
-              handleSubmit(e)
-            }}
-          >
-            Add
-          </button>
-          )
-          }
+      <nav class="w-full p-3 bg-[#000000] text-white flex justify-around">
+        <h1>TODO APP</h1>
+        <button onClick={handleLogout}><Power/></button>
+      </nav>
+      <div class="w-[450px] mx-auto mt-[3rem]">
+        <form class="w-full">
+          <div class="flex items-center justify-center border-b border-[#000000] py-2">
+            <input
+              class="appearance-none bg-transparent border-none w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none"
+              type="text"
+              placeholder="Feed the dog"
+              value={task}
+              onChange={(e) => setTask(e.target.value)}
+            />
+            {updating ? (
+              <button
+                class="flex-shrink-0 bg-[#000000] border-[#000000] hover:bg-[#5a9276] hover:border-[#5a9276] text-sm border-4 text-white py-1 px-2 rounded transition delay-150 duration-300 ease-in-out"
+                type="button"
+                onClick={(e) => {
+                  handleUpdate(e);
+                }}
+              >
+                Update
+              </button>
+            ) : (
+              <button
+                class="flex-shrink-0 bg-[#000000] border-[#000000] hover:bg-[#5a9276] hover:border-[#5a9276] text-sm border-4 text-white py-1 px-2 rounded transition delay-150 duration-300 ease-in-out"
+                type="button"
+                onClick={(e) => {
+                  handleSubmit(e);
+                }}
+              >
+                Add
+              </button>
+            )}
+          </div>
+        </form>
+        <div class="flex justify-center">
+          <ul class="bg-white rounded-lg border border-gray-200 w-[500px] mt-[3rem] text-gray-900">
+            {list &&
+              list.map((e) => {
+                return (
+                  <li class="px-6 py-2 border-b border-gray-200 w-full rounded-t-lg flex justify-around">
+                    <div class="break-normal w-[400px]">{e.task}</div>
+
+                    <span
+                      onClick={() => {
+                        initiateUpdate(e);
+                      }}
+                    >
+                      <PencilSquare />
+                    </span>
+                    <span
+                      onClick={() => {
+                        handleDelete(e);
+                      }}
+                    >
+                      <XSquareFill />
+                    </span>
+                  </li>
+                );
+              })}
+          </ul>
         </div>
-      </form>
-      <div class="flex justify-center">
-        <ul class="bg-white rounded-lg border border-gray-200 w-[500px] mt-[3rem] text-gray-900">
-          {list &&
-            list.map((e) => {
-              return (
-                <li class="px-6 py-2 border-b border-gray-200 w-full rounded-t-lg flex justify-around">
-                <div class="break-normal w-[400px]">{e.task}</div>  
-                
-                  <span
-                    onClick={() => {
-                      initiateUpdate(e);
-                    }}
-                  >
-                    <PencilSquare/>
-                  </span>
-                  <span
-                    onClick={() => {
-                      handleDelete(e);
-                    }}
-                  >
-                    <XSquareFill/>
-                  </span>
-                </li>
-              );
-            })}
-        </ul>
       </div>
-    </div>
     </>
   );
 };
